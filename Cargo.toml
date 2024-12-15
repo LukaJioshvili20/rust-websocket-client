@@ -2,6 +2,12 @@
 name = "rust-websocket-client"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+repository = "https://github.com/LukaJioshvili20/rust-websocket-client"
+keywords = ["rust", "websocket", "client", "ws"]
+categories = ["network-programming", "client"]
+readme = "README.md"
+
 
 [dependencies]
 crossterm = "0.28.1"
