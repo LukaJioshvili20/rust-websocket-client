@@ -5,6 +5,7 @@ use crossterm::{
 use futures::{sink::SinkExt, stream::StreamExt};
 use std::io::stdout;
 use tokio::io::{self, AsyncBufReadExt, BufReader};
+use tokio::signal;
 use tokio_tungstenite::{
     connect_async,
     tungstenite::{Error, Message},
@@ -24,16 +25,27 @@ where
     let stdin = io::stdin();
     let mut reader = BufReader::new(stdin).lines();
 
-    while let Ok(Some(line)) = reader.next_line().await {
-        if line == "/exit" {
-            println!("Exiting...");
-            break;
+    tokio::select! {
+        _ = signal::ctrl_c() => {
+            println!("\nReceived CTRL+C. Sending close handshake...");
+            let _ = write.send(Message::Close(None)).await;
+            std::process::exit(0);
         }
 
-        if let Err(e) = write.send(Message::Text(line.into())).await {
-            eprintln!("Failed to send message: {:?}", e);
-            break;
-        }
+        _ = async {
+            while let Ok(Some(line)) = reader.next_line().await {
+                if line == "/exit" {
+                    println!("Exiting... Sending close handshake.");
+                    let _ = write.send(Message::Close(None)).await;
+                    std::process::exit(0);
+                }
+
+                if let Err(e) = write.send(Message::Text(line.into())).await {
+                    eprintln!("Failed to send message: {:?}", e);
+                    break;
+                }
+            }
+        } => {}
     }
 }
 
