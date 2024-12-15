@@ -33,12 +33,20 @@ fn print_menu(options: &[(&str, &str)], selected: usize) -> Result<()> {
 }
 
 fn handle_selection(options: &[(&str, &str)], selected: usize) -> Result<()> {
-    execute!(stdout(), Clear(ClearType::All), cursor::MoveTo(0, 0))?;
-    println!(
-        "✅ You selected: {}\n\n{}",
-        options[selected].0, options[selected].1
-    );
-    println!("\nPress Enter to exit...");
+    let mut stdout = stdout();
+
+    execute!(
+        stdout,
+        Clear(ClearType::All),
+        cursor::MoveTo(0, 0),
+        cursor::Show
+    )?;
+
+    print!("✅ You selected: {}\r\n\r\n", options[selected].0);
+    print!("{}\r\n\r\n", options[selected].1);
+    print!("Press Enter to exit... \r\n");
+    stdout.flush()?;
+
     loop {
         if let Event::Key(key) = event::read()? {
             if key.code == KeyCode::Enter {
@@ -46,6 +54,7 @@ fn handle_selection(options: &[(&str, &str)], selected: usize) -> Result<()> {
             }
         }
     }
+
     Ok(())
 }
 
