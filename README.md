@@ -1,4 +1,4 @@
-# rust-websocket-client
+# Rust Websocket Client
 
 A terminal-based WebSocket client built in Rust. This application allows you to connect to WebSocket endpoints, send messages interactively, and receive real-time responses.
 
@@ -27,8 +27,8 @@ To build and run the client, you need:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/LukaJioshvili20/rust-websocket-server.git
-   cd rust-websocket-server
+   git clone https://github.com/LukaJioshvili20/rust-websocket-client.git
+   cd rust-websocket-client
    ```
 
 2. Build the project:
